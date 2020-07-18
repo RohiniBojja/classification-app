@@ -33,7 +33,7 @@ async def setup_learner():
     await download_file(export_file_url, path / export_file_name)
     defaults.device = torch.device('cpu')
     learn = load_learner(path/'models')
-return learn
+    return learn
 
 
 loop = asyncio.get_event_loop()
