@@ -9,7 +9,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
-export_file_url = 'https://drive.google.com/uc?export=download&id=1QT-40QEJPyElq2Pfw84cnnm5FEo3eoEh'
+export_file_url = 'https://drive.google.com/uc?export=download&id=1ESkBG6rEnRRF5VC9matUIiM1jITbiOK6'
 export_file_name = 'export.pkl'
 
 classes = ['withmask','withoutmask','withhand']
@@ -31,16 +31,9 @@ async def download_file(url, dest):
 
 async def setup_learner():
     await download_file(export_file_url, path / export_file_name)
-    try:
-        learn = load_learner(path, export_file_name)
-        return learn
-    except RuntimeError as e:
-        if len(e.args) > 0 and 'CPU-only machine' in e.args[0]:
-            print(e)
-            message = "\n\nThis model was trained with an old version of fastai and will not work in a CPU environment.\n\nPlease update the fastai library in your training environment and export your model again.\n\nSee instructions for 'Returning to work' at https://course.fast.ai."
-            raise RuntimeError(message)
-        else:
-            raise
+    defaults.device = torch.device('cpu')
+    learn = load_learner(path/'models')
+return learn
 
 
 loop = asyncio.get_event_loop()
